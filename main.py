@@ -1,20 +1,49 @@
-import string
 from datetime import date
+from re import template
+from docx import Document
+from templates import *
 import json
-import docx
 import csv
 import sys
+import os
+
+
+MARKER_CONVERSION_DICT = {r"$RECRUITER$": "Recruiter Name",
+                          r"$FIRST$": "First Name",
+                          r"$LAST$": "Last Name",
+                          r"$POSITION$": "Position Title",
+                          r"$EMAIL$": "Email"}
 
 def fill_template(parameter_dict: dict):
 
-    # Open file 
-    
-    # Create copy of file
+    # Create empty document object
+    document = Document()
+    text = ""
 
     # fill copy with parameters
+    text = introductions[parameter_dict["Intro Type"]]
+    for key in MARKER_CONVERSION_DICT:
+        while key in text:
+            text = text.replace(key, parameter_dict[MARKER_CONVERSION_DICT[key]])
+    document.add_paragraph().add_run(text)
+
+    
+    text = bodies[parameter_dict["Body Type"]]
+    for key in MARKER_CONVERSION_DICT:
+        while key in text:
+            text = text.replace(key, parameter_dict[MARKER_CONVERSION_DICT[key]])
+    document.add_paragraph().add_run(text)
+
+    text = concluding[parameter_dict["Conclusion Type"]]
+    for key in MARKER_CONVERSION_DICT:
+        while key in text:
+            text = text.replace(key, parameter_dict[MARKER_CONVERSION_DICT[key]])
+    document.add_paragraph().add_run(text)
 
     # Save Copy
-    pass
+    os.chdir("output")
+    name_friendly_ = parameter_dict["Company Name"].replace(" ", "_")
+    document.save(f"{name_friendly_}.docx")
 
 def main():
 
@@ -41,10 +70,14 @@ def main():
     elif sys.argv[1] == "-s":
 
         parameters = {"Company Name": "TEST_COMPANY_NAME",
-                        "Letter Type": "tempate_1",
-                        "Recuiter Name": "RECRUITER_NAME",
+                        "Intro Type": "Test Intro",
+                        "Body Type": "Test Body",
+                        "Conclusion Type": "Test Conclusion",
+                        "Recruiter Name": "RECRUITER_NAME",
                         "Position Title": "POSITION_TITLE",
                         "Current Date": f"{date.today().month}/{date.today().day}/{date.today().year}"}
+    
+        parameters.update(config)
 
         fill_template(parameters)
 

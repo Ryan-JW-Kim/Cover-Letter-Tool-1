@@ -1,5 +1,6 @@
 {
-    "Name": "FIRST LAST",
+    "First Name": "FIRST_NAME",
+    "Last Name": "LAST_NAME",
     "Phone": "(111)-222-3333",
-    "Email": "TESTEMAIL@gmail.com"   
+    "Email": "TESTMAIL@gmail.com"   
 }
